@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GEOCRISIS — O planeta está em suas mãos</title>
+<style>
+:root{--bg:#07111f;--panel:#0e1d30;--panel2:#132943;--line:#29415d;--text:#f3f7fc;--muted:#a3b4c8;--green:#35e0ad;--blue:#41b8ff;--red:#ff6375;--yellow:#ffd166}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 10%,#102b43 0,transparent 35%),radial-gradient(circle at 90% 90%,#10352f 0,transparent 30%),var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.screen{display:none;min-height:100vh;padding:24px}.screen.active{display:flex;align-items:center;justify-content:center}.wrap{width:min(100%,1000px);margin:auto}.card{background:rgba(14,29,48,.94);border:1px solid var(--line);border-radius:24px;padding:clamp(20px,4vw,42px);box-shadow:0 24px 70px #0005}
+.brand{font-size:clamp(42px,9vw,82px);font-weight:1000;letter-spacing:-.065em;line-height:1;background:linear-gradient(100deg,var(--green),var(--blue));color:transparent;background-clip:text;text-align:center}.tagline{text-align:center;color:var(--muted);margin:14px 0 26px}.globe{text-align:center;font-size:68px;margin-bottom:14px}
+.btn{border:0;border-radius:13px;padding:14px 20px;font-weight:850;background:linear-gradient(100deg,var(--green),var(--blue));color:#061522;transition:transform .15s,filter .15s}.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}.btn.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.center{text-align:center}.muted{color:var(--muted)}.field{display:block;width:100%;max-width:420px;margin:14px auto 0;background:#091626;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:15px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px}.panel{background:#0a1828;border:1px solid var(--line);border-radius:16px;padding:20px}.panel h2{margin-top:0}.pill{display:inline-block;padding:7px 11px;border-radius:99px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);font-size:13px}
+.game-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}.progress{height:7px;background:#172c43;border-radius:99px;overflow:hidden;margin-bottom:18px}.progress div{height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--blue));transition:width .2s}.qcategory{color:var(--green);font-size:12px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}.question{font-size:clamp(24px,4vw,36px);line-height:1.2;margin:12px 0 24px}.answers{display:grid;grid-template-columns:1fr 1fr;gap:12px}.answer{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:17px;border-radius:13px;text-align:left;min-height:68px}.answer:hover:not(:disabled){border-color:var(--blue);background:#193650}.answer.correct{border-color:var(--green);background:#123b36}.answer.wrong{border-color:var(--red);background:#411e2b}.feedback{min-height:32px;text-align:center;font-weight:800;margin-top:16px}.timer{font-weight:900;color:var(--yellow)}.score{color:var(--green);font-weight:900}.ranking{display:grid;gap:10px;margin:20px 0}.rankrow{display:flex;align-items:center;gap:14px;padding:15px;border:1px solid var(--line);background:#0a1828;border-radius:13px}.rankrow .name{flex:1;font-weight:800}.rankrow .points{color:var(--green);font-weight:900}.small{font-size:13px}.notice{font-size:13px;color:var(--muted);line-height:1.55;margin-top:20px}
+@media(max-width:650px){.screen{padding:13px}.grid,.answers{grid-template-columns:1fr}.card{border-radius:18px}.question{font-size:25px}.answer{min-height:58px}.brand{letter-spacing:-.05em}}
+</style>
+</head>
+<body>
+<section id="home" class="screen active"><div class="wrap card">
+<div class="globe">🌎</div><div class="brand">GEOCRISIS</div><p class="tagline">O planeta está em suas mãos.</p>
+<p class="center">Encare crises ambientais, desafios de cartografia e questões sobre população, clima e geopolítica. Acerte, ganhe pontos e suba no ranking!</p>
+<input id="playerName" class="field" maxlength="18" placeholder="Digite seu nome de jogador" autocomplete="nickname">
+<div class="center"><button class="btn" id="startBtn" style="margin-top:18px">🚀 Iniciar missão</button></div>
+<p class="notice center">Versão inicial de demonstração: funciona neste navegador. O modo com vários celulares conectados será ativado numa etapa seguinte.</p>
+</div></section>
+<section id="game" class="screen"><div class="wrap">
+<div class="game-top"><span class="pill">🌎 GEOCRISIS</span><span class="pill">Rodada <b id="round">1</b>/15</span><span class="pill">Tempo: <b id="timer" class="timer">15</b>s</span><span class="pill"><b id="score" class="score">0</b> XP</span></div>
+<div class="progress"><div id="progressBar"></div></div>
+<div class="card"><div id="category" class="qcategory">GEOGRAFIA</div><h1 id="question" class="question">Preparando a missão…</h1><div id="answers" class="answers"></div><div id="feedback" class="feedback" aria-live="polite"></div></div>
+</div></section>
+<section id="results" class="screen"><div class="wrap card"><div class="globe">🏆</div><div class="brand" style="font-size:clamp(38px,7vw,64px)">MISSÃO CONCLUÍDA</div><p class="tagline">Relatório final do comandante</p><div class="center"><h2 id="resultName">Jogador</h2><p style="font-size:30px;color:var(--green);font-weight:900" id="finalScore">0 XP</p><p id="resultMessage" class="muted"></p></div><h2>📊 Seu desempenho</h2><div id="summary" class="ranking"></div><div class="center"><button id="againBtn" class="btn">🔄 Jogar novamente</button> <button id="homeBtn" class="btn secondary">Tela inicial</button></div><p class="notice">Este ranking é local e mostra o resultado desta sessão. Para ranking compartilhado entre amigos, precisamos conectar a versão publicada a um banco de dados gratuito.</p></div></section>
+<script>
+const bank=[
+["Cartografia","Qual linha imaginária divide a Terra nos hemisférios Norte e Sul?",["Meridiano de Greenwich","Linha do Equador","Trópico de Câncer","Círculo Polar Ártico"],1],
+["Cartografia","O Meridiano de Greenwich é referência para medir:",["Latitude","Altitude","Longitude","Precipitação"],2],
+["Geografia do Brasil","Qual é o maior país da América do Sul em extensão territorial?",["Argentina","Brasil","Peru","Colômbia"],1],
+["Continentes","Qual é o maior continente em extensão territorial?",["África","Europa","Ásia","Oceania"],2],
+["Hidrografia","Como se chama o local onde um rio deságua?",["Nascente","Foz","Afluente","Meandro"],1],
+["Hidrografia","Uma bacia hidrográfica reúne:",["Um rio principal e seus afluentes","Apenas lagos","Somente águas subterrâneas","Uma cadeia de vulcões"],0],
+["Clima","Qual instrumento mede a quantidade de chuva?",["Termômetro","Pluviômetro","Barômetro","Anemômetro"],1],
+["Clima","Regiões próximas à Linha do Equador tendem a receber:",["Menor incidência solar durante todo o ano","Maior incidência solar ao longo do ano","Neve permanente","Noites de seis meses"],1],
+["Relevo","Qual característica é comum às planícies?",["Predomínio de áreas relativamente planas","Presença obrigatória de vulcões","Altitudes sempre acima de 3.000 m","Serem sempre desérticas"],0],
+["Relevo","A retirada de vegetação de encostas pode aumentar o risco de:",["Erosão e deslizamentos","Auroras polares","Tsunamis","Furacões"],0],
+["Urbanização","A impermeabilização do solo urbano pode aumentar:",["A infiltração da água","O risco de enchentes","A cobertura vegetal","A recarga de aquíferos em todos os casos"],1],
+["Urbanização","Qual medida ajuda a reduzir alagamentos urbanos?",["Cobrir córregos e rios","Retirar praças","Ampliar áreas permeáveis e drenagem","Asfaltar terrenos vazios"],2],
+["Meio ambiente","Uma consequência possível do desmatamento é:",["Perda de habitats","Aumento garantido da biodiversidade","Fim da erosão","Formação imediata de novas florestas"],0],
+["Meio ambiente","Qual destes é um recurso energético renovável?",["Petróleo","Carvão mineral","Vento","Gás natural"],2],
+["População","O deslocamento de pessoas entre regiões é chamado de:",["Migração","Industrialização","Intemperismo","Urbanização apenas"],0],
+["População","Quem sai de seu país para morar em outro é chamado, em relação ao país de origem, de:",["Emigrante","Imigrante apenas","Turista necessariamente","Refugiado em todos os casos"],0],
+["Geopolítica","O estudo das relações entre poder e território está ligado à:",["Geopolítica","Meteorologia","Botânica","Astronomia"],0],
+["Economia","A transformação de matérias-primas em produtos é característica do setor:",["Primário","Secundário","Terciário","Doméstico"],1],
+["Agricultura","A agricultura pertence principalmente ao setor econômico:",["Primário","Secundário","Terciário","Financeiro"],0],
+["Clima","O efeito estufa natural é importante porque:",["Ajuda a manter a Terra aquecida para a vida","Impede a ocorrência de chuvas","Elimina os oceanos","Resfria permanentemente o planeta"],0],
+["Oceanos","Qual é o maior oceano da Terra?",["Atlântico","Índico","Pacífico","Ártico"],2],
+["População","Qual país tem atualmente a maior população do mundo?",["Brasil","Índia","Rússia","Canadá"],1],
+["Cartografia","Em uma escala 1:100.000, 1 cm no mapa representa:",["100 metros","1 quilômetro","10 quilômetros","100 quilômetros"],1],
+["Clima","Qual instrumento mede a temperatura do ar?",["Pluviômetro","Termômetro","Anemômetro","Bússola"],1],
+["Cartografia","As linhas que medem posições ao norte ou ao sul do Equador indicam:",["Longitude","Latitude","Escala","Altitude"],1],
+["Globalização","A globalização ampliou principalmente:",["A integração econômica e tecnológica","O isolamento entre países","O fim do comércio internacional","A separação de redes de comunicação"],0],
+["Geografia do Brasil","Qual destes países sul-americanos não possui litoral?",["Brasil","Chile","Paraguai","Equador"],2],
+["Vegetação","A vegetação da Amazônia é adaptada principalmente a condições:",["Quentes e úmidas em grande parte da região","Polares","Desérticas e frias","Mediterrâneas em toda a área"],0],
+["Energia","A energia solar é considerada renovável porque:",["Sua fonte é naturalmente reposta","Não depende de nenhuma tecnologia","Não tem nenhum impacto ambiental","Pode ser armazenada infinitamente sem perdas"],0],
+["Crise ambiental","Uma cidade costeira quer se adaptar à elevação do nível do mar. Qual medida é mais adequada?",["Construir em todas as áreas alagáveis","Planejar o uso do solo e proteger ecossistemas costeiros","Remover todas as áreas verdes","Ignorar mapas de risco"],1]
+];
+let questions=[],index=0,score=0,combo=0,timerId=null,time=15,locked=false,correctCount=0,wrongCount=0,history=[];
+const $=id=>document.getElementById(id);
+function screen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active");}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+$("startBtn").addEventListener("click",()=>{if(!$("playerName").value.trim()){$("playerName").value="General";}startGame();});
+$("playerName").addEventListener("keydown",e=>{if(e.key==="Enter")$("startBtn").click();});
+function startGame(){questions=shuffle([...bank]).slice(0,15);index=0;score=0;combo=0;correctCount=0;wrongCount=0;history=[];screen("game");loadQuestion();}
+function loadQuestion(){clearInterval(timerId);locked=false;if(index>=questions.length){finish();return;}const q=questions[index];$("round").textContent=index+1;$("category").textContent=q[0];$("question").textContent=q[1];$("score").textContent=score;$("feedback").textContent="";$("progressBar").style.width=(index/questions.length*100)+"%";$("answers").innerHTML="";q[2].forEach((a,i)=>{const b=document.createElement("button");b.className="answer";b.innerHTML="<b>"+String.fromCharCode(65+i)+")</b> "+a;b.addEventListener("click",()=>answer(i));$("answers").appendChild(b);});time=15;$("timer").textContent=time;timerId=setInterval(()=>{time--;$("timer").textContent=time;if(time<=0)answer(-1,true);},1000);}
+function answer(choice,timeout=false){if(locked)return;locked=true;clearInterval(timerId);const q=questions[index],buttons=[...document.querySelectorAll(".answer")],isCorrect=choice===q[3];buttons.forEach(b=>b.disabled=true);buttons[q[3]].classList.add("correct");let gained=0;if(isCorrect){combo++;correctCount++;gained=100+time*5+Math.min(combo-1,4)*25;score+=gained;$("feedback").textContent="✅ CORRETO! +"+gained+" XP"+(combo>1?" · COMBO x"+combo:"");}else{combo=0;wrongCount++;if(choice>=0)buttons[choice].classList.add("wrong");$("feedback").textContent=(timeout?"⏱️ TEMPO ESGOTADO. ":"❌ NÃO FOI DESSA VEZ. ")+"Resposta: "+String.fromCharCode(65+q[3])+") "+q[2][q[3]];}history.push({category:q[0],correct:isCorrect,points:gained});$("score").textContent=score;setTimeout(()=>{index++;loadQuestion();},1500);}
+function finish(){clearInterval(timerId);$("progressBar").style.width="100%";$("resultName").textContent=($("playerName").value.trim()||"General").toUpperCase();$("finalScore").textContent=score+" XP";$("resultMessage").textContent=correctCount+" acertos de "+questions.length+" perguntas. "+(correctCount>=12?"Desempenho excelente, comandante!":correctCount>=8?"Boa missão! Continue treinando.":"Missão de reconhecimento concluída. Hora de estudar e voltar mais forte.");$("summary").innerHTML="";[["✅ Acertos",correctCount],["❌ Erros",wrongCount],["🎯 Precisão",Math.round(correctCount/questions.length*100)+"%"]].forEach(([label,val])=>{const row=document.createElement("div");row.className="rankrow";row.innerHTML='<span class="name">'+label+'</span><strong class="points">'+val+'</strong>'; $("summary").appendChild(row);});screen("results");}
+$("againBtn").addEventListener("click",startGame);$("homeBtn").addEventListener("click",()=>screen("home"));
+</script>
+</body>
+</html>
